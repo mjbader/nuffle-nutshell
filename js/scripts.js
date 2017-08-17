@@ -193,8 +193,8 @@ function parseReplay(xml) {
         }
         if (index == replay.childNodes.length - 2) {
             // Record the score
-            let homeScore = parseInt(getXMLElement(child, 'HomeScore').textContent);
-            let awayScore = parseInt(getXMLElement(child, 'AwayScore').textContent);
+            let homeScore = getXMLElement(child, 'HomeScore') ? parseInt(getXMLElement(child, 'HomeScore').textContent) : 0;
+            let awayScore = getXMLElement(child, 'AwayScore')? parseInt(getXMLElement(child, 'AwayScore').textContent) : 0;
             replayInfo.teams[0].score = homeScore;
             replayInfo.teams[1].score = awayScore;
         }
