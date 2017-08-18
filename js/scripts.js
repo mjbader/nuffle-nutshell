@@ -167,13 +167,31 @@ replayInput.addEventListener('change', () => {
     if (replayInput.files.length != 1) {
         return;
     }
-
     $("#spinner").removeClass('hidden');
     $("#replay-input").addClass('hidden');
+    loadReplay(replayInput.files[0]);
+})
 
+$('#sample-replay').click(
+    function() {
+        $("#spinner").removeClass('hidden');
+        $("#replay-input").addClass('hidden');
+        JSZipUtils.getBinaryContent('samplereplay.bbrz', function(err, data) {
+            if(err) {
+                throw err;
+            }
+        
+            JSZip.loadAsync(data).then(function () {
+                loadReplay(data);
+            });
+        });
+    }
+);
+
+function loadReplay(file) {
     // Unzip the bbrz file
     var zipFile = new JSZip();
-    zipFile.loadAsync(replayInput.files[0])
+    zipFile.loadAsync(file)
     .then((zip)=> {
         zip.forEach((relativePath, zipEntry) => {
             zipEntry.async('string').then((replay)=> {
@@ -182,7 +200,7 @@ replayInput.addEventListener('change', () => {
             });
         })
     });
-})
+}
 
 function parseReplay(xml) {
     let replay = xml.childNodes[0];
@@ -350,12 +368,16 @@ function returnTitle(type, block) {
 function returnOptions(type, block) {
     var options = {
         responsive: true,
-        maintainAspectRatio: false,
         title: {
             display: true,
             text: returnTitle(type, block),
         },
         scales: {
+            xAxes: [{
+                ticks: {
+                    autoSkip: false,
+                }
+            }],
             yAxes: [{
                 ticks: {
                     beginAtZero:true,
@@ -370,12 +392,16 @@ function returnOptions(type, block) {
 function returnOptionsPercentage(data, type, block) {
     var options = {
         responsive: true,
-        maintainAspectRatio: false,
         title: {
             display: true,
             text: '% of ' + returnTitle(type, block),
         },
         scales: {
+            xAxes: [{
+                ticks: {
+                    autoSkip: false,
+                }
+            }],
             yAxes: [{
                 ticks: {
                     callback: function(value) {
@@ -396,7 +422,7 @@ function returnOptionsPercentage(data, type, block) {
 function renderChart(type, block) {
     var div = document.createElement('div');
     div.id = "wrapper";
-    div.style.cssText = "position: relative; height: 300px; width: 500px;";
+   // div.style.cssText = "position: relative; height: 300px; width: 600px;";
     var ctx = document.createElement('canvas');
     ctx.id = `${type}-roll`;
     div.appendChild(ctx);
@@ -408,7 +434,7 @@ function renderChart(type, block) {
     // Render Percentage Chart
     var divPercent = document.createElement('div');
     divPercent.id = "wrapper";
-    divPercent.style.cssText = "position: relative; height: 300px; width: 500px;";
+    //divPercent.style.cssText = "position: relative; height: 300px; width: 600px;";
     var ctxPercent = document.createElement('canvas');
     ctxPercent.id = `${type}-percentage`;
     divPercent.appendChild(ctxPercent);
