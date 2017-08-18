@@ -39,6 +39,10 @@ body {
   margin: 30px 0;
 }
 
+.sample-paragraph {
+  margin-top: 20px;
+}
+
 /* Main upload screen */
 .jumbotron {
   text-align: center;
